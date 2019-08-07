@@ -4,19 +4,16 @@ openSet = [];
 closedSet = [];
 
 gCost = m;
-hCost = m;
 
 mapSize = size(m);
 parent = zeros(mapSize(1),mapSize(2), 2);
 for x = 1:mapSize(1)
     for y = 1:mapSize(2)
         gCost(x,y) = Inf;
-        hCost(x,y) = Inf;
     end
 end
 
 gCost(startloc(1), startloc(2)) = 0;
-hCost(startloc(1), startloc(2)) = 0;
 
 openSet = [openSet; rot90(startloc)];
 setSize = size(openSet);
@@ -26,10 +23,8 @@ while(setSize(2) > 0) %#ok<ISMT>
         
         node = openSet(:,i);  
         
-        if(gCost(node(1), node(2)) + hCost(node(1), node(2)) <= gCost(activePos(1), activePos(2)) + hCost(activePos(1), activePos(2)))
-            if(hCost(node(1), node(2)) < hCost(activePos(1), activePos(2)))
+        if(gCost(node(1), node(2)) <= gCost(activePos(1), activePos(2)))
                 activePos = node;
-            end
         end
     end
     openSet(:,i) = [];
@@ -57,16 +52,15 @@ while(setSize(2) > 0) %#ok<ISMT>
                 
                 neighbour = m(neighbourPos(1), neighbourPos(2));
                 
-                if (neighbour == 1 | isMemberOF(closedSet, neighbourPos) == 1)
+                if (neighbour == 1 | isMemberoF(closedSet, neighbourPos) == 1)
                     continue;
                 end
                 costtoNeighbour = gCost(activePos(1), activePos(2)) + 1;
-                if(costtoNeighbour < gCost(neighbourPos(1), neighbourPos(2)) | isMemberOF(openSet, neighbourPos) == 0)
+                if(costtoNeighbour < gCost(neighbourPos(1), neighbourPos(2)) | isMemberoF(openSet, neighbourPos) == 0)
                     gCost(neighbourPos(1), neighbourPos(2)) = costtoNeighbour;
-                    hCost(neighbourPos(1), neighbourPos(2)) = 1;
                     parent(neighbourPos(1), neighbourPos(2), :) = activePos;
                     
-                    if(isMemberOF(openSet, neighbourPos) == 0)
+                    if(isMemberoF(openSet, neighbourPos) == 0)
                         openSet = [openSet, [neighbourPos(1);neighbourPos(2)]];
                     end
                 end
@@ -75,7 +69,7 @@ while(setSize(2) > 0) %#ok<ISMT>
     end
 end
 
-function [isTrue] = isMemberOF(array,element)
+function [isTrue] = isMemberoF(array,element)
     arraySize = size(array);
     for i=1:arraySize(2)
         if(element(1) == array(1,i) && element(2) == array(2,i))
